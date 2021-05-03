@@ -1,6 +1,6 @@
 html {
-  font-family: Roboto, Arial, sans-serif;
-  font-weight: lighter;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-weight: normal;
   color: #202124;
 }
 
@@ -14,13 +14,26 @@ main {
   width: 100%;
 }
 
+header {
+  height: 64px;
+}
+
+/* 
+GENERAL 
+*/
 .display-flex-center {
   display: flex;
   align-items: center;
 }
 
-header {
-  height: 64px;
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
 }
 
 /* 
@@ -65,11 +78,59 @@ input::-webkit-search-cancel-button {
   appearance: none;
 }
 
-/* border: 1px solid #dadce0; */
-
 /* 
 MAIN ---- RESULST & NOMINATIONS
 */
 main {
   justify-content: center;
 }
+
+.main-container {
+  width: 92%;
+}
+
+.results-section {
+  align-self: flex-start;
+  width: 68%;
+  border: 2px solid slateblue;
+}
+
+.results-header {
+  align-items: center;
+  height: 28px;
+  border: solid 2px yellow;
+}
+
+#searchString {
+  font-size: medium;
+  padding-left: 4px;
+}
+
+.nominations-section {
+  align-self: flex-start;
+  width: 32%;
+  padding-left: 14px;
+}
+
+.nominations-card-container {
+  border: 1.5px solid #dadce0;
+  border-radius: 10px;
+  padding: 16px 10px;
+  max-width: 480px;
+  height: auto;
+}
+
+.nomination-img-container {
+  width: 60px;
+  height: 60px;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+}
+
+.nomination-img {
+  max-width: 60px;
+  max-height: 60px;
+}
+
+/* border: 1px solid #dadce0; */
