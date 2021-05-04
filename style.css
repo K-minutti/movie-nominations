@@ -23,7 +23,7 @@ header {
 }
 
 /* 
-GENERAL 
+GENERAL  ----------------->
 */
 .display-flex-center {
   display: flex;
@@ -46,6 +46,10 @@ button {
   outline: none;
 }
 
+button:hover {
+  cursor: pointer;
+}
+
 p {
   padding: 0;
   margin: 0;
@@ -55,11 +59,16 @@ i {
   color: #5f6368;
 }
 
+h2 {
+  color: #858588;
+  text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.15);
+}
+
 /* 
-SEARCH BAR  
+SEARCH BAR   ----------------->
 */
 section {
-  height: 120px;
+  height: 110px;
   justify-content: center;
 }
 
@@ -97,7 +106,7 @@ input::-webkit-search-cancel-button {
 }
 
 /* 
-MAIN ---- RESULST & NOMINATIONS
+MAIN ---- RESULST & NOMINATIONS ----------------->
 */
 main {
   justify-content: center;
@@ -107,26 +116,120 @@ main {
   width: 95%;
 }
 
+/* RESULTS SEC */
 .results-section {
   align-self: flex-start;
   width: 68%;
-  border: 2px solid slateblue;
 }
 
 .results-header {
-  align-items: center;
   height: 28px;
   padding: 4px 0px;
-  border: solid 2px yellow;
+}
+
+.results-header-row-right {
+  align-items: center;
+}
+.results-header-title {
+  font-size: large;
 }
 
 #searchString {
-  font-size: medium;
-  padding-left: 4px;
+  padding-left: 8px;
+}
+
+.results-toggle {
+  width: auto;
+  height: 22px;
+  font-size: x-small;
+  color: #5f6368;
+  border: 0.1px solid #dadce0;
+  border-radius: 6px;
+  background-color: #fff;
+}
+
+.results-toggle > i {
+  margin-right: 4px;
+}
+
+.results-header-row-left {
+  margin-left: auto;
+  align-items: center;
+}
+
+.results-header-row-left button {
+  margin-right: 8px;
+}
+
+.results-items-container {
+  display: grid;
+  max-height: 600px;
+  padding-top: 16px;
+  gap: 20px 10px;
+  align-items: center;
+  justify-items: center;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-flow: row;
+  overflow-y: scroll;
+}
+
+.results-items-container::-webkit-scrollbar {
+  display: none;
+  appearance: none;
+}
+
+.movie-result-card {
+  width: 215px;
+  height: 245px;
+  padding-top: 8px;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #fff;
+  box-shadow: 1px 3px 3px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.result-image-container,
+.result-img {
+  height: 100%;
+  max-width: 100px;
+  max-height: 140px;
+  border: 1px solid red;
+}
+
+.result-text-button {
+  width: 100%;
+  height: 100%;
+  padding-top: 10px;
+  border: 1px solid blue;
+  align-items: center;
+}
+
+.result-title {
+  font-weight: bold;
+}
+.result-year {
+  color: #5f6368;
+  font-weight: normal;
+  font-size: small;
+}
+
+.result-button-container {
+  margin-bottom: 10px;
+  border: 1px solid yellow;
+}
+
+.nominate-result-button {
+  width: 72px;
+  height: 22px;
+  font-weight: bold;
+  color: #9f9d1a;
+  border: 0.1px solid #9a9035;
+  border-radius: 6px;
+  background: #f6f5cf;
 }
 
 /* NOMINATIONS SEC */
-
 .nominations-section {
   align-self: flex-start;
   width: 32%;
@@ -148,14 +251,13 @@ main {
 
 .nomination {
   border-top: 1px solid #dadce0;
-  border-bottom: 1px solid #dadce0;
-  padding: 4px 0px;
-  border: 1px solid slateblue;
+  padding: 8px 0px;
   justify-content: flex-start;
 }
 
 .nomination-img-container {
-  width: 60px;
+  width: 20%;
+  max-width: 60px;
   height: 60px;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.86);
@@ -168,11 +270,26 @@ main {
 }
 
 .nomination-text {
-  border: 2px solid blue;
+  width: 60%;
+  padding: 4px 8px;
 }
 
-.nomination-text {
-  border: 2px solid blue;
+.nomination-title {
+  color: #202124;
+  font-size: small;
+  font-weight: bold;
+}
+
+.nomination-year {
+  color: #5f6368;
+  font-weight: normal;
+  font-size: x-small;
+}
+
+.nomination-button-container {
+  width: 20%;
+  flex-direction: row;
+  justify-content: flex-end;
 }
 
 .remove-button {
@@ -180,5 +297,7 @@ main {
   height: 22px;
   font-weight: bold;
   color: #a50e0e;
+  border: 0.1px solid #9a3535;
+  border-radius: 6px;
   background: #f9e0de;
 }
