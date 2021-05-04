@@ -10,6 +10,7 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" type="text/css" href="./style.css" />
+    <script src="./script.js" defer></script>
     <title>Movie Nominations</title>
   </head>
   <body>
@@ -21,6 +22,7 @@
         <i class="fas fa-search" aria-hidden="true"></i>
         <input
           type="search"
+          id="searchbar"
           value=""
           placeholder="Search for movies by title"
           class="search-input"
@@ -45,24 +47,8 @@
             </div>
           </div>
 
-          <div class="results-items-container">
-            <div class="movie-result-card column">
-              <div class="result-image-container display-flex-center">
-                <img
-                  class="result-img"
-                  src="https://cdn.pastemagazine.com/www/system/images/photo_albums/best-movie-posters-2016/large/la-la-land-xlg.jpg?1384968217"
-                />
-              </div>
-              <div class="result-text-button column">
-                <div class="result-text-items column">
-                  <p class="result-title">The Greatest Showman Ever Period</p>
-                  <p class="result-year">(2017)</p>
-                </div>
-                <div class="result-button-container column">
-                  <button class="nominate-result-button">nominate</button>
-                </div>
-              </div>
-            </div>
+          <div id="results-items-container">
+            <!-- SEARCH RESULTS WILL POPULATE HERE -->
           </div>
         </div>
 

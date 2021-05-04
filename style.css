@@ -113,7 +113,7 @@ main {
 }
 
 .main-container {
-  width: 95%;
+  width: 92%;
 }
 
 /* RESULTS SEC */
@@ -161,7 +161,7 @@ main {
   margin-right: 8px;
 }
 
-.results-items-container {
+#results-items-container {
   display: grid;
   max-height: 600px;
   padding: 16px 0px;
@@ -173,7 +173,7 @@ main {
   overflow-y: scroll;
 }
 
-.results-items-container::-webkit-scrollbar {
+#results-items-container::-webkit-scrollbar {
   display: none;
   appearance: none;
 }
