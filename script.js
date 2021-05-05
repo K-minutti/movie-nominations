@@ -12,6 +12,9 @@ const searchMovies = async (text) => {
     const queryString = `http://www.omdbapi.com/?s=${text}&type=movie&page=50&apikey=f78d61a1`;
     const res = await fetch(queryString);
     const get_movies = await res.json();
+    get_movies["Search"].forEach((movie, index) => {
+      movie["searchIndex"] = index;
+    });
     movies = get_movies["Search"];
     return movies;
   } catch (err) {
@@ -41,7 +44,7 @@ const displaySearchError = (res) => {
 
 const displayMovies = (movies) => {
   const htmlInsert = movies
-    .map((movie, index) => {
+    .map((movie) => {
       let poster = movie["Poster"];
       if (poster == "N/A") {
         poster = alternativeMoviePoster;
@@ -61,7 +64,7 @@ const displayMovies = (movies) => {
                     <p class="result-year">(${movie["Year"]})</p>
                 </div>
                 <div class="result-button-container column">
-                    <button id="searchResult-${index}"onclick="addNomination(${index})" class="nominate-result-button" >nominate</button>
+                    <button id="searchResult-${movie["searchIndex"]}" onclick="addNomination(${movie["searchIndex"]})" class="nominate-result-button" >nominate</button>
                 </div>
             </div>
       </div>
@@ -102,15 +105,16 @@ const displayNominations = (nominations) => {
   nominationsContainer.innerHTML = htmlInsert;
 };
 
-const addNomination = (index) => {
-  let movieData = movies[index];
-  movies[index]["searchIndex"] = index;
-  movieData["searchIndex"] = index;
-  if (nominations.length < 5) {
-    document.getElementsByClassName("nominate-result-button")[
-      index
-    ].disabled = true;
+/// We would just add expression to disabled attr in string saying if the searchIndex is in the array then we set it to true else false
+//
 
+const addNomination = (searchIndex) => {
+  let movieData = movies[searchIndex];
+  // movies[index]["searchIndex"] = index;
+  // movieData["searchIndex"] = index;
+  if (nominations.length < 5) {
+    document.getElementById(`searchResult-${searchIndex}`).disabled = true;
+    // append searchIndex to array of disabled nominatebuttons
     nominations.push(movieData);
     displayNominations(nominations);
 
@@ -126,6 +130,8 @@ const addNomination = (index) => {
 
 const removeNomination = (nominationIndex, searchIndex) => {
   nominations.splice(nominationIndex, 1);
+
+  // remove searchIndex from array of disabled nominatebuttons
   displayNominations(nominations);
   document.getElementsByClassName("nominate-result-button")[
     searchIndex
