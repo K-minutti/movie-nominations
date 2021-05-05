@@ -16,7 +16,12 @@
   <body>
     <header class="display-flex-center">
       <h2>The Shoppies</h2>
+      <h1>🍿</h1>
     </header>
+    <div id="banner-notification">
+      You Did it! You nominated 5 movies.🌟
+      <i id="banner-close" class="fas fa-times" onclick="closeBanner()"></i>
+    </div>
     <section class="display-flex-center">
       <form id="search-bar-form" class="display-flex-center" name="search">
         <i class="fas fa-search" aria-hidden="true"></i>
@@ -38,12 +43,9 @@
               <p id="searchString"></p>
             </div>
             <div class="results-header-row-left row">
-              <button class="results-toggle">
+              <button class="results-toggle" onclick="toggleYearOrder()">
                 <i class="fas fa-sort"></i>Year
               </button>
-              <!-- <button class="results-toggle">
-                <i class="fas fa-th-list"> </i>Dispaly
-              </button> -->
             </div>
           </div>
 
@@ -56,7 +58,9 @@
           <div class="nominations-card-container">
             <div class="nominations-header">Your nominations</div>
 
-            <div id="nominations" class="nominations-items-container"></div>
+            <div id="nominations" class="nominations-items-container">
+              <!-- NOMINATIONS WILL POPULATE HERE -->
+            </div>
           </div>
         </div>
       </div>

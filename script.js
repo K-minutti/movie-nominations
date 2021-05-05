@@ -61,7 +61,7 @@ const displayMovies = (movies) => {
                     <p class="result-year">(${movie["Year"]})</p>
                 </div>
                 <div class="result-button-container column">
-                    <button id="${index}" onclick="addNomination(${index})" class="nominate-result-button" >nominate</button>
+                    <button id="searchResult-${index}"onclick="addNomination(${index})" class="nominate-result-button" >nominate</button>
                 </div>
             </div>
       </div>
@@ -74,6 +74,7 @@ const displayMovies = (movies) => {
 const displayNominations = (nominations) => {
   const htmlInsert = nominations
     .map((movie, index) => {
+      let searchIndex = movie["searchIndex"];
       let poster = movie["Poster"];
       if (poster == "N/A") {
         poster = alternativeMoviePoster;
@@ -91,7 +92,7 @@ const displayNominations = (nominations) => {
       <p class="nomination-year">${movie["Year"]}</p>
     </div>
     <div class="nomination-button-container display-flex-center">
-      <button class="remove-button" onclick="removeNomination(${index})">remove</button>
+      <button class="remove-button" onclick="removeNomination(${index}, ${searchIndex})">remove</button>
     </div>
   </div> 
     `;
@@ -103,12 +104,16 @@ const displayNominations = (nominations) => {
 
 const addNomination = (index) => {
   let movieData = movies[index];
+  movies[index]["searchIndex"] = index;
+  movieData["searchIndex"] = index;
   if (nominations.length < 5) {
     document.getElementsByClassName("nominate-result-button")[
       index
     ].disabled = true;
+
     nominations.push(movieData);
     displayNominations(nominations);
+
     let nominationsLen = nominations.length;
     if (nominationsLen == 3) {
       userAlert("toast");
@@ -119,41 +124,70 @@ const addNomination = (index) => {
   }
 };
 
+const removeNomination = (nominationIndex, searchIndex) => {
+  nominations.splice(nominationIndex, 1);
+  displayNominations(nominations);
+  document.getElementsByClassName("nominate-result-button")[
+    searchIndex
+  ].disabled = false;
+};
+
+let nominationsAlertCount = 0;
 const userAlert = (type) => {
-  if (type == "toast") {
-    let htmlNotifInsert = `
+  if (type == "toast" && nominationsAlertCount < 2) {
+    nominationsAlertCount++;
+    let htmlToastInsert = `
       <div class="toast-notification">You have 2 nominations left.</div>
     `;
     document.getElementsByClassName(
       "nominations-header"
-    )[0].innerHTML = htmlNotifInsert;
+    )[0].innerHTML = htmlToastInsert;
   }
 
   setTimeout(function () {
     document.getElementsByClassName("nominations-header")[0].innerText =
       "Your Nominations";
-  }, 3000);
+  }, 3500);
 
   if (type == "banner") {
-    let banner = document.createElement("div");
-    banner.className = "banner-notification";
-    banner.innerText = "You Did it! You reached a total of 5 nominations.";
-    document.body.appendChild(banner);
-
-    setTimeout(function () {
-      document.getElementsByClassName("banner-notification")[0].style.display =
-        "none";
-    }, 10000);
+    document.getElementById("banner-notification").style.visibility = "visible";
   }
 };
 
-const removeNomination = (index) => {
-  nominations.splice(index, 1);
-  document.getElementsByClassName("nominate-result-button")[
-    index
-  ].disabled = false;
-  displayMovies(movies);
-  displayNominations(nominations);
+const closeBanner = () => {
+  document.getElementById("banner-notification").style.visibility = "hidden";
+};
+
+//Function for sorting array Ascending
+function compareYear(a, b) {
+  let aYear = Number(a.Year);
+  let bYear = Number(b.Year);
+  if (aYear < bYear) {
+    return -1;
+  } else if (aYear > bYear) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+let order = 1;
+const toggleYearOrder = () => {
+  order += 1;
+  if (order == 1) {
+    console.log(movies);
+    displayMovies(movies);
+  }
+  if (order == 2) {
+    let moviesAscending = [...movies].sort(compareYear);
+    moviesAscending = moviesAscending.reverse();
+    displayMovies(moviesAscending);
+  }
+  if (order == 3) {
+    let moviesDescending = [...movies].sort(compareYear);
+    displayMovies(moviesDescending);
+    order -= 3;
+  }
 };
 
 const loadWelcomeMovieSelection = async () => {

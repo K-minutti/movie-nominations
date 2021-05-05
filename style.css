@@ -74,6 +74,18 @@ h2 {
   padding-left: 12px;
 }
 
+#banner-close {
+  padding: 0px 30px;
+  color: white;
+  font-size: 24px;
+  position: relative;
+  top: 2px;
+}
+
+#banner-close:hover {
+  color: #858588;
+}
+
 /* 
 SEARCH BAR   ----------------->
 */
@@ -322,7 +334,7 @@ main {
 
 .toast-notification {
   margin: auto;
-  width: 80%;
+  width: 90%;
   padding: 12px 0px;
   background-color: #12805c;
   font-weight: bold;
@@ -337,9 +349,8 @@ main {
   -ms-animation: fadeIn 2.5s;
 }
 
-.banner-notification {
-  /* position:absolute; */
-
+#banner-notification {
+  visibility: hidden;
   margin: auto;
   top: 0;
   left: 0;
