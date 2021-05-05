@@ -48,7 +48,9 @@ const displayMovies = (movies) => {
       }
       return `
         <div class="movie-result-card column">
+        <i class="fas fa-star star"></i>
             <div class="result-image-container display-flex-center">
+         
                 <img
                     class="result-img"
                     src="${poster}"
@@ -70,37 +72,57 @@ const displayMovies = (movies) => {
   resultItems.innerHTML = htmlInsert;
 };
 
-const addNomination = (index) => {
-  let movieData = movies[index];
-  let poster = movieData["Poster"];
-  if (poster == "N/A") {
-    poster = alternativeMoviePoster;
-  }
-  const nomination = `
-  <div class="nomination row">
-  <div class="nomination-img-container display-flex-center">
-  <img
-  class="nomination-img"
-  src="${poster}"
-/>
-  </div>
-  <div class="nomination-text">
-    <p class="nomination-title">${movieData["Title"]}</p>
-    <p class="nomination-year">${movieData["Year"]}</p>
-  </div>
-  <div class="nomination-button-container display-flex-center">
-    <button class="remove-button">remove</button>
-  </div>
-</div> 
-  `;
+const displayNominations = (nominations) => {
+  const htmlInsert = nominations
+    .map((movie, index) => {
+      let poster = movie["Poster"];
+      if (poster == "N/A") {
+        poster = alternativeMoviePoster;
+      }
+      return `
+    <div class="nomination row">
+    <div class="nomination-img-container display-flex-center">
+    <img
+    class="nomination-img"
+    src="${poster}"
+  />
+    </div>
+    <div class="nomination-text">
+      <p class="nomination-title">${movie["Title"]}</p>
+      <p class="nomination-year">${movie["Year"]}</p>
+    </div>
+    <div class="nomination-button-container display-flex-center">
+      <button class="remove-button" onclick="removeNomination(${index})">remove</button>
+    </div>
+  </div> 
+    `;
+    })
+    .join("");
 
-  nominationsContainer.innerHTML += nomination;
+  nominationsContainer.innerHTML = htmlInsert;
 };
 
-// onclick="removeNomination(index)"
-// const removeNomination = (index) => {
-//    remove movie data from array that holds nominations
-// }
+const addNomination = (index) => {
+  let movieData = movies[index];
+  if (nominations.length < 5) {
+    // if length == 2 userAlert("toast") // userAlert("banner")
+    document.getElementsByClassName("nominate-result-button")[
+      index
+    ].disabled = true;
+    document.getElementsByClassName("star")[index].style.display = "block";
+    nominations.push(movieData);
+    displayNominations(nominations);
+  }
+};
+
+const removeNomination = (index) => {
+  nominations.splice(index, 1);
+  document.getElementsByClassName("nominate-result-button")[
+    index
+  ].disabled = false;
+  displayMovies(movies);
+  displayNominations(nominations);
+};
 
 const loadWelcomeMovieSelection = async () => {
   const results = await searchMovies("Code");
