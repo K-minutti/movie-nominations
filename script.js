@@ -1,6 +1,11 @@
 const formField = document.getElementById("search-bar-form");
 const resultItems = document.getElementById("results-items-container");
+const nominationsContainer = document.getElementById("nominations");
+const alternativeMoviePoster =
+  "https://images.unsplash.com/photo-1608533371942-daebef51bc40?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1275&q=80";
+
 let movies = [];
+const nominations = [];
 
 const searchMovies = async (text) => {
   try {
@@ -35,11 +40,8 @@ const displaySearchError = (res) => {
 };
 
 const displayMovies = (movies) => {
-  const alternativeMoviePoster =
-    "https://images.unsplash.com/photo-1608533371942-daebef51bc40?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1275&q=80";
-
   const htmlInsert = movies
-    .map((movie) => {
+    .map((movie, index) => {
       let poster = movie["Poster"];
       if (poster == "N/A") {
         poster = alternativeMoviePoster;
@@ -51,14 +53,14 @@ const displayMovies = (movies) => {
                     class="result-img"
                     src="${poster}"
                 />
-            </div>
+            </div>  
             <div class="result-text-button column">
                 <div class="result-text-items column">
                     <p class="result-title">${movie["Title"]}</p>
                     <p class="result-year">(${movie["Year"]})</p>
                 </div>
                 <div class="result-button-container column">
-                    <button class="nominate-result-button">nominate</button>
+                    <button id="${index}" onclick="addNomination(${index})" class="nominate-result-button" >nominate</button>
                 </div>
             </div>
       </div>
@@ -68,10 +70,37 @@ const displayMovies = (movies) => {
   resultItems.innerHTML = htmlInsert;
 };
 
-//we need a function that will add the movie to the nominations section when the user clicks nominate
-//
+const addNomination = (index) => {
+  let movieData = movies[index];
+  let poster = movieData["Poster"];
+  if (poster == "N/A") {
+    poster = alternativeMoviePoster;
+  }
+  const nomination = `
+  <div class="nomination row">
+  <div class="nomination-img-container display-flex-center">
+  <img
+  class="nomination-img"
+  src="${poster}"
+/>
+  </div>
+  <div class="nomination-text">
+    <p class="nomination-title">${movieData["Title"]}</p>
+    <p class="nomination-year">${movieData["Year"]}</p>
+  </div>
+  <div class="nomination-button-container display-flex-center">
+    <button class="remove-button">remove</button>
+  </div>
+</div> 
+  `;
 
-// we need animation functions
+  nominationsContainer.innerHTML += nomination;
+};
+
+// onclick="removeNomination(index)"
+// const removeNomination = (index) => {
+//    remove movie data from array that holds nominations
+// }
 
 const loadWelcomeMovieSelection = async () => {
   const results = await searchMovies("Code");
