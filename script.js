@@ -48,7 +48,6 @@ const displayMovies = (movies) => {
       }
       return `
         <div class="movie-result-card column">
-        <i class="fas fa-star star"></i>
             <div class="result-image-container display-flex-center">
          
                 <img
@@ -105,13 +104,46 @@ const displayNominations = (nominations) => {
 const addNomination = (index) => {
   let movieData = movies[index];
   if (nominations.length < 5) {
-    // if length == 2 userAlert("toast") // userAlert("banner")
     document.getElementsByClassName("nominate-result-button")[
       index
     ].disabled = true;
-    document.getElementsByClassName("star")[index].style.display = "block";
     nominations.push(movieData);
     displayNominations(nominations);
+    let nominationsLen = nominations.length;
+    if (nominationsLen == 3) {
+      userAlert("toast");
+    }
+    if (nominationsLen == 5) {
+      userAlert("banner");
+    }
+  }
+};
+
+const userAlert = (type) => {
+  if (type == "toast") {
+    let htmlNotifInsert = `
+      <div class="toast-notification">You have 2 nominations left.</div>
+    `;
+    document.getElementsByClassName(
+      "nominations-header"
+    )[0].innerHTML = htmlNotifInsert;
+  }
+
+  setTimeout(function () {
+    document.getElementsByClassName("nominations-header")[0].innerText =
+      "Your Nominations";
+  }, 3000);
+
+  if (type == "banner") {
+    let banner = document.createElement("div");
+    banner.className = "banner-notification";
+    banner.innerText = "You Did it! You reached a total of 5 nominations.";
+    document.body.appendChild(banner);
+
+    setTimeout(function () {
+      document.getElementsByClassName("banner-notification")[0].style.display =
+        "none";
+    }, 10000);
   }
 };
 

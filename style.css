@@ -1,11 +1,14 @@
-html {
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
   font-family: "Helvetica Neue", Arial, sans-serif;
   font-weight: normal;
   color: #202124;
-}
-
-* {
-  box-sizing: border-box;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -69,17 +72,6 @@ h2 {
   color: #858588;
   text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.15);
   padding-left: 12px;
-}
-
-.star {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  display: none;
-  color: #9a9035;
-  z-index: 9;
-  position: relative;
-  left: 90px;
 }
 
 /* 
@@ -322,4 +314,93 @@ main {
   border: 0.1px solid #9a3535;
   border-radius: 6px;
   background: #f9e0de;
+}
+
+/* 
+--- NOTIFICATIONS ----------------->
+*/
+
+.toast-notification {
+  margin: auto;
+  width: 80%;
+  padding: 12px 0px;
+  background-color: #12805c;
+  font-weight: bold;
+  font-size: small;
+  text-align: center;
+  color: white;
+  border-radius: 12px;
+  animation: fadeIn 2.5s;
+  -webkit-animation: fadeIn 2.5s;
+  -moz-animation: fadeIn 2.5s;
+  -o-animation: fadeIn 2.5s;
+  -ms-animation: fadeIn 2.5s;
+}
+
+.banner-notification {
+  /* position:absolute; */
+
+  margin: auto;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 24px 0px 18px 0px;
+  z-index: 9999;
+  position: fixed;
+  background-color: #12805c;
+  font-weight: bold;
+  font-size: normal;
+  text-align: center;
+  color: white;
+  box-shadow: 0 2px 6px rgb(60 63 66 / 32%);
+  animation: fadeIn 2.5s;
+  -webkit-animation: fadeIn 2.5s;
+  -moz-animation: fadeIn 2.5s;
+  -o-animation: fadeIn 2.5s;
+  -ms-animation: fadeIn 2.5s;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-moz-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-o-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-ms-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
