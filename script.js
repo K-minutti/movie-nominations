@@ -6,6 +6,7 @@ const alternativeMoviePoster =
 
 let movies = [];
 const nominations = [];
+const nominationSearchIndices = [];
 
 const searchMovies = async (text) => {
   try {
@@ -49,6 +50,7 @@ const displayMovies = (movies) => {
       if (poster == "N/A") {
         poster = alternativeMoviePoster;
       }
+      let searchIndex = movie["searchIndex"];
       return `
         <div class="movie-result-card column">
             <div class="result-image-container display-flex-center">
@@ -64,7 +66,7 @@ const displayMovies = (movies) => {
                     <p class="result-year">(${movie["Year"]})</p>
                 </div>
                 <div class="result-button-container column">
-                    <button id="searchResult-${movie["searchIndex"]}" onclick="addNomination(${movie["searchIndex"]})" class="nominate-result-button" >nominate</button>
+                    <button id="searchResult-${searchIndex}" onclick="addNomination(${searchIndex})" class="nominate-result-button" >nominate</button>
                 </div>
             </div>
       </div>
@@ -105,16 +107,19 @@ const displayNominations = (nominations) => {
   nominationsContainer.innerHTML = htmlInsert;
 };
 
-/// We would just add expression to disabled attr in string saying if the searchIndex is in the array then we set it to true else false
-//
+const disableButtons = (buttonIndicesArr) => {
+  for (let i = 0; i < buttonIndicesArr.length; ++i) {
+    let buttonId = "searchResult-" + buttonIndicesArr[i];
+    document.getElementById(buttonId).disabled = true;
+  }
+};
 
 const addNomination = (searchIndex) => {
   let movieData = movies[searchIndex];
-  // movies[index]["searchIndex"] = index;
-  // movieData["searchIndex"] = index;
   if (nominations.length < 5) {
     document.getElementById(`searchResult-${searchIndex}`).disabled = true;
-    // append searchIndex to array of disabled nominatebuttons
+    nominationSearchIndices.push(searchIndex);
+    disableButtons(nominationSearchIndices);
     nominations.push(movieData);
     displayNominations(nominations);
 
@@ -130,12 +135,11 @@ const addNomination = (searchIndex) => {
 
 const removeNomination = (nominationIndex, searchIndex) => {
   nominations.splice(nominationIndex, 1);
-
-  // remove searchIndex from array of disabled nominatebuttons
   displayNominations(nominations);
-  document.getElementsByClassName("nominate-result-button")[
-    searchIndex
-  ].disabled = false;
+  let searchIndexToRemove = nominationSearchIndices.indexOf(searchIndex);
+  nominationSearchIndices.splice(searchIndexToRemove, 1);
+  let buttonId = "searchResult-" + searchIndex;
+  document.getElementById(buttonId).disabled = false;
 };
 
 let nominationsAlertCount = 0;
@@ -181,17 +185,19 @@ let order = 1;
 const toggleYearOrder = () => {
   order += 1;
   if (order == 1) {
-    console.log(movies);
     displayMovies(movies);
+    disableButtons(nominationSearchIndices);
   }
   if (order == 2) {
     let moviesAscending = [...movies].sort(compareYear);
     moviesAscending = moviesAscending.reverse();
     displayMovies(moviesAscending);
+    disableButtons(nominationSearchIndices);
   }
   if (order == 3) {
     let moviesDescending = [...movies].sort(compareYear);
     displayMovies(moviesDescending);
+    disableButtons(nominationSearchIndices);
     order -= 3;
   }
 };
