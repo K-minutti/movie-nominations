@@ -5,17 +5,15 @@ const alternativeMoviePoster =
   "https://images.unsplash.com/photo-1608533371942-daebef51bc40?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1275&q=80";
 
 let movies = [];
-const nominations = [];
-const nominationSearchIndices = [];
+const nominations = {};
 
 const searchMovies = async (text) => {
   try {
     const queryString = `http://www.omdbapi.com/?s=${text}&type=movie&apikey=f78d61a1`;
     const res = await fetch(queryString);
     const get_movies = await res.json();
-    console.log(get_movies);
     get_movies["Search"].forEach((movie, index) => {
-      movie["uniqueId"] = movie["Title"] + index;
+      movie["uniqueId"] = movie["Title"] + movie["Year"];
       movie["searchIndex"] = index;
     });
     movies = get_movies["Search"];
@@ -69,7 +67,7 @@ const displayMovies = (movies) => {
                     <p class="result-year">(${movie["Year"]})</p>
                 </div>
                 <div class="result-button-container column">
-                    <button id="${uniqueId}" onclick="addNomination(${searchIndex}, ${uniqueId})" class="nominate-result-button" >nominate</button>
+                    <button id="nominate-${uniqueId}" onclick="addNomination(${searchIndex}, ${uniqueId})" class="nominate-result-button" >nominate</button>
                 </div>
             </div>
       </div>
@@ -79,6 +77,7 @@ const displayMovies = (movies) => {
   resultItems.innerHTML = htmlInsert;
 };
 
+// LOOP Over object
 const displayNominations = (nominations) => {
   const htmlInsert = nominations
     .map((movie, index) => {
@@ -100,7 +99,7 @@ const displayNominations = (nominations) => {
       <p class="nomination-year">${movie["Year"]}</p>
     </div>
     <div class="nomination-button-container display-flex-center">
-      <button class="remove-button" onclick="removeNomination(${index}, ${uniqueId})">remove</button>
+      <button class="remove-button" onclick="removeNomination(${uniqueId})">remove</button>
     </div>
   </div> 
     `;
@@ -110,37 +109,38 @@ const displayNominations = (nominations) => {
   nominationsContainer.innerHTML = htmlInsert;
 };
 
-const disableButtons = (buttonIndicesArr) => {
-  for (let i = 0; i < buttonIndicesArr.length; ++i) {
-    document.getElementById(buttonIndicesArr[i]).disabled = true;
+const disableButtons = () => {
+  for (const key in nominations) {
+    document.getElementById(`nominate-${key}`).disabled = true;
   }
 };
+
+// for add nomination we will take the movie data and set it equal to a key value pair in the nomination obj
+// where the key is the the id passed in and the value is the moviedata obj
 
 const addNomination = (searchIndex, id) => {
   let movieData = movies[searchIndex];
   if (nominations.length < 5) {
-    document.getElementById(id).disabled = true;
-    nominationSearchIndices.push(id);
-    disableButtons(nominationSearchIndices);
-    nominations.push(movieData);
+    nominations[id] = movieData;
+    disableButtons(nominations);
     displayNominations(nominations);
-
-    let nominationsLen = nominations.length;
-    if (nominationsLen == 3) {
+    let len = Object.keys(nominations).length;
+    if (len == 3) {
       userAlert("toast");
     }
-    if (nominationsLen == 5) {
+    if (len == 5) {
       userAlert("banner");
     }
   }
 };
 
-const removeNomination = (nominationIndex, id) => {
-  nominations.splice(nominationIndex, 1);
+// on remove we will delete the ID passed as arg that is in the nominations object
+// we will also get the object with the id we passed in add "nominate" at the beginning in order to say disbaled is false
+
+const removeNomination = (id) => {
+  delete nominations[id];
   displayNominations(nominations);
-  let searchIndexToRemove = nominationSearchIndices.indexOf(id);
-  nominationSearchIndices.splice(searchIndexToRemove, 1);
-  document.getElementById(id).disabled = false;
+  document.getElementById(`nominate-${id}`).disabled = false;
 };
 
 let nominationsAlertCount = 0;
