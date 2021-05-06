@@ -5,18 +5,36 @@ const alternativeMoviePoster =
   "https://images.unsplash.com/photo-1608533371942-daebef51bc40?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1275&q=80";
 
 let movies = [];
-const nominations = {};
+let nominations = {};
 
 const searchMovies = async (text) => {
+  let searchMovies = [];
   try {
-    const queryString = `http://www.omdbapi.com/?s=${text}&type=movie&apikey=f78d61a1`;
-    const res = await fetch(queryString);
-    const get_movies = await res.json();
-    get_movies["Search"].forEach((movie, index) => {
-      movie["uniqueId"] = movie["Title"] + movie["Year"];
+    let count = 1;
+    while (count <= 5) {
+      const queryString = `http://www.omdbapi.com/?s=${text}&type=movie&page=${count}&apikey=f78d61a1`;
+      const res = await fetch(queryString);
+      let getMovies = await res.json();
+      getMovies = getMovies["Search"];
+      if (res == getMovies) {
+        break;
+      } else {
+        searchMovies = [...searchMovies, ...getMovies];
+        count++;
+      }
+    }
+    movies = searchMovies;
+    let jsonMovies = movies.map(JSON.stringify);
+    let uniqueMovies = new Set(jsonMovies);
+    movies = Array.from(uniqueMovies).map(JSON.parse);
+
+    movies.forEach((movie, index) => {
       movie["searchIndex"] = index;
+      if (movie["Poster"] == "N/A") {
+        movie["Poster"] = alternativeMoviePoster;
+      }
     });
-    movies = get_movies["Search"];
+    console.log(movies);
     return movies;
   } catch (err) {
     console.error(err);
@@ -30,7 +48,7 @@ formField.addEventListener("submit", async (e) => {
     document.getElementById("searchString").innerText = searchQuery;
     const results = await searchMovies(searchQuery);
     if (results == undefined) {
-      displaySearchError("Movie not found! Try again ...");
+      displaySearchError("Movie not found! Try again ... please");
     } else {
       displayMovies(results);
     }
@@ -46,19 +64,14 @@ const displaySearchError = (res) => {
 const displayMovies = (movies) => {
   const htmlInsert = movies
     .map((movie) => {
-      let poster = movie["Poster"];
-      if (poster == "N/A") {
-        poster = alternativeMoviePoster;
-      }
-      let uniqueId = movie["uniqueId"];
+      let uniqueId = movie["imdbID"];
       let searchIndex = movie["searchIndex"];
       return `
         <div class="movie-result-card column">
             <div class="result-image-container display-flex-center">
-         
                 <img
                     class="result-img"
-                    src="${poster}"
+                    src="${movie["Poster"]}"
                 />
             </div>  
             <div class="result-text-button column">
@@ -67,7 +80,8 @@ const displayMovies = (movies) => {
                     <p class="result-year">(${movie["Year"]})</p>
                 </div>
                 <div class="result-button-container column">
-                    <button id="nominate-${uniqueId}" onclick="addNomination(${searchIndex}, ${uniqueId})" class="nominate-result-button" >nominate</button>
+                    <button id="nominate-${uniqueId}" onclick="addNomination(${searchIndex}, '${uniqueId}')" class="nominate-result-button" >nominate</button>
+                    
                 </div>
             </div>
       </div>
@@ -75,55 +89,16 @@ const displayMovies = (movies) => {
     })
     .join("");
   resultItems.innerHTML = htmlInsert;
+  disableButtons();
 };
-
-// LOOP Over object
-const displayNominations = (nominations) => {
-  const htmlInsert = nominations
-    .map((movie, index) => {
-      let uniqueId = movie["uniqueId"];
-      let poster = movie["Poster"];
-      if (poster == "N/A") {
-        poster = alternativeMoviePoster;
-      }
-      return `
-    <div class="nomination row">
-    <div class="nomination-img-container display-flex-center">
-    <img
-    class="nomination-img"
-    src="${poster}"
-  />
-    </div>
-    <div class="nomination-text">
-      <p class="nomination-title">${movie["Title"]}</p>
-      <p class="nomination-year">${movie["Year"]}</p>
-    </div>
-    <div class="nomination-button-container display-flex-center">
-      <button class="remove-button" onclick="removeNomination(${uniqueId})">remove</button>
-    </div>
-  </div> 
-    `;
-    })
-    .join("");
-
-  nominationsContainer.innerHTML = htmlInsert;
-};
-
-const disableButtons = () => {
-  for (const key in nominations) {
-    document.getElementById(`nominate-${key}`).disabled = true;
-  }
-};
-
-// for add nomination we will take the movie data and set it equal to a key value pair in the nomination obj
-// where the key is the the id passed in and the value is the moviedata obj
 
 const addNomination = (searchIndex, id) => {
   let movieData = movies[searchIndex];
-  if (nominations.length < 5) {
+  let testLen = Object.keys(nominations).length;
+  if (testLen < 5) {
     nominations[id] = movieData;
-    disableButtons(nominations);
-    displayNominations(nominations);
+    disableButtons();
+    displayNominations();
     let len = Object.keys(nominations).length;
     if (len == 3) {
       userAlert("toast");
@@ -134,13 +109,49 @@ const addNomination = (searchIndex, id) => {
   }
 };
 
-// on remove we will delete the ID passed as arg that is in the nominations object
-// we will also get the object with the id we passed in add "nominate" at the beginning in order to say disbaled is false
+// LOOP Over object addNomination(${searchIndex}, ${uniqueId})
+const displayNominations = () => {
+  let htmlInsertItems = [];
+
+  for (const key in nominations) {
+    let movie = nominations[key];
+    let uniqueId = movie["imdbID"];
+    htmlInsertItems.push(`
+      <div class="nomination row">
+      <div class="nomination-img-container display-flex-center">
+      <img
+      class="nomination-img"
+      src="${movie["Poster"]}"
+    />
+      </div>
+      <div class="nomination-text">
+        <p class="nomination-title">${movie["Title"]}</p>
+        <p class="nomination-year">${movie["Year"]}</p>
+      </div>
+      <div class="nomination-button-container display-flex-center">
+        <button class="remove-button" onclick="removeNomination('${uniqueId}')">remove</button>
+      </div>
+    </div> 
+      `);
+  }
+  let htmlInsert = htmlInsertItems.join("");
+  nominationsContainer.innerHTML = htmlInsert;
+};
+
+const disableButtons = () => {
+  for (const key in nominations) {
+    let id = "nominate-" + key;
+    let element = document.getElementById(id);
+    if (element) {
+      element.disabled = true;
+    }
+  }
+};
 
 const removeNomination = (id) => {
   delete nominations[id];
-  displayNominations(nominations);
-  document.getElementById(`nominate-${id}`).disabled = false;
+  displayNominations();
+  displayMovies(movies);
 };
 
 let nominationsAlertCount = 0;
@@ -187,18 +198,15 @@ const toggleYearOrder = () => {
   order += 1;
   if (order == 1) {
     displayMovies(movies);
-    disableButtons(nominationSearchIndices);
   }
   if (order == 2) {
     let moviesAscending = [...movies].sort(compareYear);
     moviesAscending = moviesAscending.reverse();
     displayMovies(moviesAscending);
-    disableButtons(nominationSearchIndices);
   }
   if (order == 3) {
     let moviesDescending = [...movies].sort(compareYear);
     displayMovies(moviesDescending);
-    disableButtons(nominationSearchIndices);
     order -= 3;
   }
 };
