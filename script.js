@@ -10,10 +10,12 @@ const nominationSearchIndices = [];
 
 const searchMovies = async (text) => {
   try {
-    const queryString = `http://www.omdbapi.com/?s=${text}&type=movie&page=50&apikey=f78d61a1`;
+    const queryString = `http://www.omdbapi.com/?s=${text}&type=movie&apikey=f78d61a1`;
     const res = await fetch(queryString);
     const get_movies = await res.json();
+    console.log(get_movies);
     get_movies["Search"].forEach((movie, index) => {
+      movie["uniqueId"] = movie["Title"] + index;
       movie["searchIndex"] = index;
     });
     movies = get_movies["Search"];
@@ -50,6 +52,7 @@ const displayMovies = (movies) => {
       if (poster == "N/A") {
         poster = alternativeMoviePoster;
       }
+      let uniqueId = movie["uniqueId"];
       let searchIndex = movie["searchIndex"];
       return `
         <div class="movie-result-card column">
@@ -66,7 +69,7 @@ const displayMovies = (movies) => {
                     <p class="result-year">(${movie["Year"]})</p>
                 </div>
                 <div class="result-button-container column">
-                    <button id="searchResult-${searchIndex}" onclick="addNomination(${searchIndex})" class="nominate-result-button" >nominate</button>
+                    <button id="${uniqueId}" onclick="addNomination(${searchIndex}, ${uniqueId})" class="nominate-result-button" >nominate</button>
                 </div>
             </div>
       </div>
@@ -79,7 +82,7 @@ const displayMovies = (movies) => {
 const displayNominations = (nominations) => {
   const htmlInsert = nominations
     .map((movie, index) => {
-      let searchIndex = movie["searchIndex"];
+      let uniqueId = movie["uniqueId"];
       let poster = movie["Poster"];
       if (poster == "N/A") {
         poster = alternativeMoviePoster;
@@ -97,7 +100,7 @@ const displayNominations = (nominations) => {
       <p class="nomination-year">${movie["Year"]}</p>
     </div>
     <div class="nomination-button-container display-flex-center">
-      <button class="remove-button" onclick="removeNomination(${index}, ${searchIndex})">remove</button>
+      <button class="remove-button" onclick="removeNomination(${index}, ${uniqueId})">remove</button>
     </div>
   </div> 
     `;
@@ -109,16 +112,15 @@ const displayNominations = (nominations) => {
 
 const disableButtons = (buttonIndicesArr) => {
   for (let i = 0; i < buttonIndicesArr.length; ++i) {
-    let buttonId = "searchResult-" + buttonIndicesArr[i];
-    document.getElementById(buttonId).disabled = true;
+    document.getElementById(buttonIndicesArr[i]).disabled = true;
   }
 };
 
-const addNomination = (searchIndex) => {
+const addNomination = (searchIndex, id) => {
   let movieData = movies[searchIndex];
   if (nominations.length < 5) {
-    document.getElementById(`searchResult-${searchIndex}`).disabled = true;
-    nominationSearchIndices.push(searchIndex);
+    document.getElementById(id).disabled = true;
+    nominationSearchIndices.push(id);
     disableButtons(nominationSearchIndices);
     nominations.push(movieData);
     displayNominations(nominations);
@@ -133,13 +135,12 @@ const addNomination = (searchIndex) => {
   }
 };
 
-const removeNomination = (nominationIndex, searchIndex) => {
+const removeNomination = (nominationIndex, id) => {
   nominations.splice(nominationIndex, 1);
   displayNominations(nominations);
-  let searchIndexToRemove = nominationSearchIndices.indexOf(searchIndex);
+  let searchIndexToRemove = nominationSearchIndices.indexOf(id);
   nominationSearchIndices.splice(searchIndexToRemove, 1);
-  let buttonId = "searchResult-" + searchIndex;
-  document.getElementById(buttonId).disabled = false;
+  document.getElementById(id).disabled = false;
 };
 
 let nominationsAlertCount = 0;
