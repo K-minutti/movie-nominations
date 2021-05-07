@@ -10,19 +10,34 @@ let nominations = {};
 const searchMovies = async (text) => {
   let searchMovies = [];
   try {
-    let count = 1;
-    while (count <= 5) {
-      const queryString = `http://www.omdbapi.com/?s=${text}&type=movie&page=${count}&apikey=f78d61a1`;
-      const res = await fetch(queryString);
-      let getMovies = await res.json();
-      getMovies = getMovies["Search"];
-      if (res == getMovies) {
-        break;
+    const initialQuery = `http://www.omdbapi.com/?s=${text}&type=movie&apikey=f78d61a1`;
+    const res = await fetch(initialQuery);
+    const responseObj = await res.json();
+    if (responseObj.Response == "False") {
+      return;
+    } else {
+      let resulstSetOne = responseObj["Search"];
+      searchMovies = [...resulstSetOne];
+      let totalResults = Number(responseObj["totalResults"]);
+      let totalPagesToFetch = 0;
+      if (totalResults % 10 == 0) {
+        totalPagesToFetch = totalResults / 10;
       } else {
+        let remainder = totalResults % 10;
+        totalPagesToFetch = (totalResults + remainder) / 10;
+      }
+      let count = 2;
+      totalPagesToFetch = totalPagesToFetch <= 5 ? totalPagesToFetch : 5;
+      while (count <= totalPagesToFetch) {
+        let queryString = `http://www.omdbapi.com/?s=${text}&type=movie&page=${count}&apikey=f78d61a1`;
+        const res = await fetch(queryString);
+        let getMovies = await res.json();
+        getMovies = getMovies["Search"];
         searchMovies = [...searchMovies, ...getMovies];
         count++;
       }
     }
+
     movies = searchMovies;
     let jsonMovies = movies.map(JSON.stringify);
     let uniqueMovies = new Set(jsonMovies);
@@ -34,7 +49,6 @@ const searchMovies = async (text) => {
         movie["Poster"] = alternativeMoviePoster;
       }
     });
-    console.log(movies);
     return movies;
   } catch (err) {
     console.error(err);
@@ -44,7 +58,7 @@ const searchMovies = async (text) => {
 formField.addEventListener("submit", async (e) => {
   e.preventDefault();
   try {
-    const searchQuery = e.target.children[1].value;
+    const searchQuery = e.target.children[1].value.trim();
     document.getElementById("searchString").innerText = searchQuery;
     const results = await searchMovies(searchQuery);
     if (results == undefined) {

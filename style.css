@@ -285,6 +285,7 @@ main {
 .nomination-img-container {
   width: 20%;
   max-width: 60px;
+  min-width: 60px;
   height: 60px;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.86);
