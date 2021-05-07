@@ -10,7 +10,7 @@ let nominations = {};
 const searchMovies = async (text) => {
   let searchMovies = [];
   try {
-    const initialQuery = `http://www.omdbapi.com/?s=${text}&type=movie&apikey=f78d61a1`;
+    const initialQuery = `https://www.omdbapi.com/?s=${text}&type=movie&apikey=f78d61a1`;
     const res = await fetch(initialQuery);
     const responseObj = await res.json();
     if (responseObj.Response == "False") {
@@ -29,7 +29,7 @@ const searchMovies = async (text) => {
       let count = 2;
       totalPagesToFetch = totalPagesToFetch <= 5 ? totalPagesToFetch : 5;
       while (count <= totalPagesToFetch) {
-        let queryString = `http://www.omdbapi.com/?s=${text}&type=movie&page=${count}&apikey=f78d61a1`;
+        let queryString = `https://www.omdbapi.com/?s=${text}&type=movie&page=${count}&apikey=f78d61a1`;
         const res = await fetch(queryString);
         let getMovies = await res.json();
         getMovies = getMovies["Search"];
