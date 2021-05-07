@@ -4,10 +4,12 @@
 
 ### A small app to compile a list of movie nominations. Visit live site [here](https://movie-nominations-pa8zg.ondigitalocean.app/)
 
-This app was made using plain HTML, CSS, and JavaScript.
-Icons are from font-awesome
+The site is set to search for "Code" by default to make it feel less empty\
+
+This app was made using plain HTML, CSS, and JavaScript. Icons are from font-awesome\
 
 ## Features
 
-Search movies by title
-Toggle order by year
+Uses the OMDb API. [link](http://www.omdbapi.com/)\
+Search movies by title\
+Toggle order by year\
