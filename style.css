@@ -185,7 +185,7 @@ main {
 
 #results-items-container {
   display: grid;
-  max-height: 600px;
+  max-height: 650px;
   padding: 16px 0px;
   gap: 20px 10px;
   align-items: center;
@@ -357,7 +357,7 @@ main {
   top: 0;
   left: 0;
   width: 100%;
-  padding: 24px 0px 18px 0px;
+  padding: 30px 0px 18px 0px;
   z-index: 9999;
   position: fixed;
   background-color: #12805c;
